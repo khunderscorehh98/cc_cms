@@ -1,29 +1,30 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+// Dynamically import all view components from the views folder
+const modules = require.context('../views', true, /\.vue$/);
+
+const routes = modules.keys().map((file) => {
+  const componentName = file
+    .replace(/^\.\/(.*)\.vue$/, '$1') // Remove './' and '.vue'
+    .toLowerCase(); // Convert to lowercase for uniformity
+
+  const routePath = componentName === 'homeview' ? '/' : `/${componentName.replace('view', '')}`; // Home route logic
+  const routeName = componentName.replace('view', ''); // Remove 'View' suffix
+
+  return {
+    path: routePath,
+    name: routeName,
+    component: modules(file).default,
+  };
+});
 
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
