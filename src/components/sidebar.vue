@@ -34,7 +34,7 @@
         <transition name="fade">
           <v-list v-if="dropdowns.jobSeekers" dense>
             <v-list-item>
-              <v-btn block text to="/job-seekers/">
+              <v-btn block text to="/JobSeekers/">
                 All List
               </v-btn>
             </v-list-item>
